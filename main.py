@@ -4,14 +4,14 @@ from pathlib import Path
 
 def generate_silver_man_video():
     output_filename = "final_video.mp4"
-    print("-> Silver Man වීඩියෝව FFmpeg මඟින් සකස් කරමින් පවතී...")
+    print("-> වැඩි දියුණු කළ Silver Man වීඩියෝව සකස් කරමින් පවතී...")
     
-    # ටවුන් එක ළඟ රිදී මිනිසා (Silver Man) තේමාවට අදාළව ටෙක්ස්ට් එකක් සහිතව වීඩියෝව සකස් කිරීම
+    # ඩියුරේෂන් එක තත්පර 15 දක්වා වැඩි කර, HD කොලිටියෙන් සහ Silver Man කතාවට ගැළපෙන ටෙක්ස්ට් එකක් සහිතව සකස් කිරීම
     cmd = [
         "ffmpeg", "-y",
         "-f", "lavfi",
-        "-i", "color=c=black:s=1280x720:d=5",
-        "-vf", "drawtext=text='Silver Man in Town':fontcolor=white:fontsize=48:x=(w-text_w)/2:y=(h-text_h)/2",
+        "-i", "color=c=black:s=1280x720:r=30:d=15",
+        "-vf", "drawtext=text='Silver Man Amazes People in Town':fontcolor=silver:fontsize=44:x=(w-text_w)/2:y=(h-text_h)/2",
         "-c:v", "libx264",
         "-pix_fmt", "yuv420p",
         output_filename
@@ -22,7 +22,7 @@ def generate_silver_man_video():
     print("FFmpeg Error:", result.stderr)
     
     if os.path.exists(output_filename):
-        print(f"-> සාර්ථකයි! ෆයිල් සයිස් එක: {os.path.getsize(output_filename)} bytes")
+        print(f"-> සාර්ථකයි! අලුත් ෆයිල් සයිස් එක: {os.path.getsize(output_filename)} bytes")
     else:
         print("-> දෝෂයකි: වීඩියෝව සෑදී නැත!")
 
