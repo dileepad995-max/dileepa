@@ -1,6 +1,8 @@
 import os
+import time
 import requests
 from google import genai
+from google.genai.errors import ServerError
 from gtts import gTTS
 from moviepy import VideoFileClip, AudioFileClip
 
@@ -13,11 +15,19 @@ def generate_script():
         "Keep it engaging, emotional, and high-retention."
     )
     
-    response = client.models.generate_content(
-        model='gemini-3.6-flash',
-        contents=prompt,
-    )
-    return response.text.strip()
+    for attempt in range(3):
+        try:
+            response = client.models.generate_content(
+                model='gemini-3.6-flash',
+                contents=prompt,
+            )
+            return response.text.strip()
+        except ServerError as e:
+            if "503" in str(e) and attempt < 2:
+                print(f"Server busy (503), retrying in {(attempt + 1) * 5} seconds...")
+                time.sleep((attempt + 1) * 5)
+            else:
+                raise e
 
 def download_pexels_video():
     api_key = os.environ.get("PEXELS_API_KEY")
