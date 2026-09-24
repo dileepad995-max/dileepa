@@ -43,5 +43,4 @@ def main():
     else:
         raise Exception("Error: final_video.mp4 was not created successfully!")
 
-if __name__ == "__main__":
-    main()
+if __name__ == "__main__":   
