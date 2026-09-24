@@ -1,39 +1,40 @@
 import os
 from pathlib import Path
 
-# --- 1. CONFIGURATION ---
+# MoviePy ඉම්පෝට් කරගැනීම (නැත්නම් කලින් වගේ ඩමි ෆයිල් නොවී සැබෑ වීඩියෝවක් සකස් කිරීමට)
+try:
+    from moviepy.editor import ColorClip
+    MOVIEPY_AVAILABLE = True
+except ImportError:
+    MOVIEPY_AVAILABLE = False
+
 VIDEO_CONFIG = {
-    "resolution": "1080p",
+    "resolution": (1920, 1080),
     "fps": 30,
-    "max_duration_seconds": 90,
+    "duration": 10,  # වීඩියෝ කාලය තත්පර 10 ක් ලෙස සකසා ඇත
     "audio_track": "single_clean_voiceover.mp3",
-    "output_format": "mp4",
-    "encoding": "UTF-8"
+    "output_file": "final_video.mp4"
 }
 
-def initialize_pipeline():
-    print("-> Clean Audio Auto Video Pipeline ආරම්භ වෙමින් පවතී...")
-    print(f"-> Current Working Directory: {os.getcwd()}")
-    Path("output").mkdir(exist_ok=True)
-    Path("assets").mkdir(exist_ok=True)
-
-def generate_video_with_single_audio():
-    # GitHub Actions බලාපොරොත්තු වන පරිදි කෙළින්ම 'final_video.mp4' ලෙස සේව් කිරීම
-    output_filename = "final_video.mp4"
+def generate_real_video():
+    print("-> සැබෑ වීඩියෝව (Real Video) ජනනය කිරීම ආරම්භ වෙමින් පවතී...")
+    output_filename = VIDEO_CONFIG["output_file"]
     
-    print(f"-> ෆයිල් එක සකස් කෙරේ: {output_filename}")
-    with open(output_filename, "w", encoding="utf-8") as f:
-        f.write(f"Video Stream with Single Clean Audio Track: {VIDEO_CONFIG['audio_track']}")
-    
-    # ෆයිල් එක නිවැරදිව සෑදී ඇත්දැයි පරීක්ෂා කිරීම
-    if os.path.exists(output_filename):
-        print(f"-> සාර්ථකයි: ෆයිල් එක පිහිටා ඇත්තේ මෙහිදීය -> {os.path.abspath(output_filename)}")
+    if MOVIEPY_AVAILABLE:
+        # MoviePy මඟින් පැහැදිලි වර්ණ ක්ලිප් එකක් සහ නිවැරදි ෆ්‍රේම් රේට් එකක් සහිත වීඩියෝවක් සකස් කරයි
+        clip = ColorClip(size=VIDEO_CONFIG["resolution"], color=(20, 30, 40), duration=VIDEO_CONFIG["duration"])
+        clip.fps = VIDEO_CONFIG["fps"]
+        clip.write_videofile(output_filename, codec="libx264", audio=False)
+        print(f"-> MoviePy හරහා වීඩියෝව සාර්ථකව රෙන්ඩර් කරන ලදී: {output_filename}")
     else:
-        print("-> දෝෂයකි: ෆයිල් එක සෑදී නැත!")
+        print("-> අවවාදයයි: MoviePy ලයිබ්‍රරි එක හමු නොවීය. කරුණාකර requirements.txt වෙත moviepy එකතු කර ඇති බව තහවුරු කරන්න.")
         
-    return output_filename
+    # ෆයිල් එක නිවැරදිව සෑදී ඇත්දැයි පරික්ෂා කිරීම
+    if os.path.exists(output_filename):
+        print(f"-> සාර්ථකයි! ෆයිල් සයිස් එක: {os.path.getsize(output_filename)} bytes")
+    else:
+        print("-> දෝෂයකි: වීඩියෝ ෆයිල් එක සෑදී නැත!")
 
 if __name__ == "__main__":
-    initialize_pipeline()
-    generate_video_with_single_audio()
-    print("-> වැඩේ සාර්ථකව අවසන්!")
+    generate_real_video()
+    print("-> වැඩේ සම්පූර්ණයි!")
