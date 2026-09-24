@@ -18,10 +18,15 @@ jobs:
       with:
         python-version: '3.10'
 
+    - name: Install FFmpeg
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y ffmpeg
+
     - name: Install dependencies
       run: |
         python -m pip install --upgrade pip
-        pip install google-genai gtts requests
+        pip install google-genai gtts requests moviepy
 
     - name: Run main script
       env:
