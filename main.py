@@ -2,16 +2,16 @@ import os
 import subprocess
 from pathlib import Path
 
-def generate_video():
+def generate_silver_man_video():
     output_filename = "final_video.mp4"
-    print("-> FFmpeg මඟින් සැබෑ වීඩියෝව සකස් කරමින් පවතී...")
+    print("-> Silver Man වීඩියෝව FFmpeg මඟින් සකස් කරමින් පවතී...")
     
-    # FFmpeg හරහා පර්ෆෙක්ට් MP4 වීඩියෝවක් රෙන්ඩර් කිරීම
+    # ටවුන් එක ළඟ රිදී මිනිසා (Silver Man) තේමාවට අදාළව ටෙක්ස්ට් එකක් සහිතව වීඩියෝව සකස් කිරීම
     cmd = [
         "ffmpeg", "-y",
         "-f", "lavfi",
-        "-i", "testsrc=size=1280x720:rate=30",
-        "-t", "5",
+        "-i", "color=c=black:s=1280x720:d=5",
+        "-vf", "drawtext=text='Silver Man in Town':fontcolor=white:fontsize=48:x=(w-text_w)/2:y=(h-text_h)/2",
         "-c:v", "libx264",
         "-pix_fmt", "yuv420p",
         output_filename
@@ -27,4 +27,4 @@ def generate_video():
         print("-> දෝෂයකි: වීඩියෝව සෑදී නැත!")
 
 if __name__ == "__main__":
-    generate_video()
+    generate_silver_man_video()
