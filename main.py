@@ -2,7 +2,7 @@ import os
 import requests
 from google import genai
 from gtts import gTTS
-from moviepy.editor import VideoFileClip, AudioFileClip
+from moviepy import VideoFileClip, AudioFileClip
 
 def generate_script():
     client = genai.Client(api_key=os.environ.get("GEMINI_API_KEY"))
@@ -29,7 +29,6 @@ def download_pexels_video():
     
     if "videos" in data and len(data["videos"]) > 0:
         video_files = data["videos"][0]["video_files"]
-        # Select an HD or suitable video link
         video_url = video_files[0]["link"]
         
         print("Downloading video from Pexels...")
@@ -59,11 +58,10 @@ def main():
     video_clip = VideoFileClip(video_path)
     audio_clip = AudioFileClip(audio_path)
 
-    # Trim video to match audio length if video is longer, or loop if needed
     if video_clip.duration > audio_clip.duration:
-        video_clip = video_clip.subclip(0, audio_clip.duration)
+        video_clip = video_clip.subclipped(0, audio_clip.duration)
 
-    final_clip = video_clip.set_audio(audio_clip)
+    final_clip = video_clip.with_audio(audio_clip)
     final_clip.write_videofile("final_video.mp4", fps=24, codec="libx264", audio_codec="aac")
     print("Final video generated successfully as final_video.mp4!")
 
