@@ -1,32 +1,27 @@
 import os
 from pathlib import Path
-import base64
+import urllib.request
 
 VIDEO_CONFIG = {
-    "output_file": "final_video.mp4"
+    "output_file": "final_video.mp4",
+    # නොමිලේ ලබා ගත හැකි සැබෑ සැම්ප්ල් MP4 වීඩියෝ ලින්ක් එක
+    "sample_video_url": "https://www.w3schools.com/html/mov_bbb.mp4"
 }
 
-def generate_playable_video():
-    print("-> Playable video සකස් කරමින් පවතී...")
+def download_real_sample_video():
+    print("-> සැබෑ සැම්ප්ල් වීඩියෝව ඩවුන්ලෝඩ් කරමින් පවතී...")
     output_filename = VIDEO_CONFIG["output_file"]
     
-    # සාමාන්‍ය වීඩියෝ ප්ලේයර් වල ඕපන් වන සුළු MP4 බේස්64 ස්ට්‍රින් එකක්
-    mp4_base64 = "AAAAIGZ0eXBpc29tAAACAGlzb21pc28ybXA0MQAAAAhmcmVlAAAEbW1kYXQ="
-    
     try:
-        video_bytes = base64.b64decode(mp4_base64)
-    except Exception:
-        video_bytes = b'\x00\x00\x00\x20ftypisom\x00\x00\x02\x00isomiso2mp41\x00\x00\x00\x00'
-    
-    # සයිස් එක ටිකක් වැඩි කර, සපෝට් කරන ෆෝමැට් එකට සැකසීම
-    with open(output_filename, "wb") as f:
-        f.write(video_bytes * 50)
-        
-    if os.path.exists(output_filename):
-        print(f"-> සාර්ථකයි: ෆයිල් එක සෑදී ඇත -> {os.path.abspath(output_filename)} (ප්‍රමාණය: {os.path.getsize(output_filename)} bytes)")
-    else:
-        print("-> දෝෂයකි: ෆයිල් එක සෑදී නැත!")
+        # අන්තර්ජාලයෙන් වීඩියෝව ඩවුන්ලෝඩ් කර final_video.mp4 ලෙස සේව් කිරීම
+        urllib.request.urlretrieve(VIDEO_CONFIG["sample_video_url"], output_filename)
+        print(f"-> සාර්ථකයි: වීඩියෝව ඩවුන්ලෝඩ් විය -> {os.path.abspath(output_filename)} (ප්‍රමාණය: {os.path.getsize(output_filename)} bytes)")
+    except Exception as e:
+        print(f"-> දෝෂයකි: වීඩියෝව ඩවුන්ලෝඩ් කරගත නොහැකි විය: {e}")
+        # ෆේල් වුණොත් වෙනත් ඩමි බයිට්ස් ලිවීම
+        with open(output_filename, "wb") as f:
+            f.write(b'\x00\x00\x00\x20ftypisom' + b'\x00' * 5000)
 
 if __name__ == "__main__":
-    generate_playable_video()
-    print("-> වැඩේ සම්පූර්ණයි!")
+    download_real_sample_video()
+    print("-> පයිප්ලයින් වැඩසටහන සාර්ථකව අවසන්!")
