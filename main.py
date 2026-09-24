@@ -32,23 +32,27 @@ def generate_script():
 def download_pexels_video():
     api_key = os.environ.get("PEXELS_API_KEY")
     headers = {"Authorization": api_key}
-    url = "https://api.pexels.com/videos/search?query=living+statue&per_page=1"
     
-    response = requests.get(url, headers=headers)
-    data = response.json()
+    # Fallback queries to ensure we always find a matching video on Pexels
+    queries = ["living statue", "street performer", "silver statue", "statue"]
     
-    if "videos" in data and len(data["videos"]) > 0:
-        video_files = data["videos"][0]["video_files"]
-        video_url = video_files[0]["link"]
+    for query in queries:
+        url = f"https://api.pexels.com/videos/search?query={query.replace(' ', '+')}&per_page=1"
+        response = requests.get(url, headers=headers)
+        data = response.json()
         
-        print("Downloading video from Pexels...")
-        video_data = requests.get(video_url).content
-        video_path = "temp_video.mp4"
-        with open(video_path, "wb") as f:
-            f.write(video_data)
-        return video_path
-    else:
-        raise Exception("No videos found on Pexels for the given query.")
+        if "videos" in data and len(data["videos"]) > 0:
+            video_files = data["videos"][0]["video_files"]
+            video_url = video_files[0]["link"]
+            
+            print(f"Downloading video from Pexels using query: '{query}'...")
+            video_data = requests.get(video_url).content
+            video_path = "temp_video.mp4"
+            with open(video_path, "wb") as f:
+                f.write(video_data)
+            return video_path
+            
+    raise Exception("No videos found on Pexels for any of the fallback queries.")
 
 def main():
     print("Generating viral script...")
